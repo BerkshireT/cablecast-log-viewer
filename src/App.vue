@@ -2,6 +2,7 @@
   <div id="app">
     <img alt="Cablecast logo" src="./assets/logo.png" width="250px">
     <h1>Cablecast Log Viewer</h1>
+    <h4> by Tyler Berkshire</h4>
 
     <input type="file" accept=".log" @change="loadLogs">
 

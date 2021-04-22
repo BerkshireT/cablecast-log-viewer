@@ -90,7 +90,9 @@ export default {
         }
 
         // Date
-        if ((this.ascending && !this.firstLoad) || !this.ascending) { // logs are always asc when first loaded so no need to flip
+        // Still seems to be wonky, if you choose the severity first it won't swap back to ascending
+        // I think it has something to do with this being a computed method
+        if (!this.ascending || (this.ascending && !this.firstLoad)) { // logs are always asc when first loaded so no need to flip
            filteredLogs = filteredLogs.reverse()
         }
 
@@ -140,10 +142,6 @@ button {
    padding-left: 10px;
    padding-right: 10px;
    border: 1px solid black;
-}
-
-.default {
-   
 }
 
 .green {

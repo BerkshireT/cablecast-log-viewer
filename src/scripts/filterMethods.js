@@ -33,6 +33,18 @@ var filters = {
       })
 
       return filteredLogs
+   },
+
+   search (logs, searchString) {
+      var filteredLogs = []
+
+      logs.forEach(function(line) {
+         if (line.message.toLowerCase().includes(searchString)) {
+            filteredLogs.push(line)
+         }
+      })
+
+      return filteredLogs
    }
 }
 

@@ -1,13 +1,26 @@
 <template>
   <div class="LogViewer">
-    <h3>Filters</h3>
+    <h3>Severity</h3>
     <div id="filterButtons">
       <button @click="InfoFilter" v-bind:class="infoFilter ? 'green' : 'default'">INFO</button>
       <button @click="WarningFilter" v-bind:class="warningFilter ? 'green' : 'default'">WARN</button>
       <button @click="ErrorFilter" v-bind:class="errorFilter ? 'green' : 'default'">ERROR</button>
     </div>
-    <h3>Date Range</h3>
-    <h3>Custom Search</h3>
+
+    <h3>Timestamp</h3>
+    <div id="dateButtons">
+       <button @click="DateOrderSwap" :disabled="ascending" v-bind:class="ascending ? 'green' : 'default'">Ascending</button>
+       <button @click="DateOrderSwap" :disabled="!ascending" v-bind:class="!ascending ? 'green' : 'default'">Descending</button>
+       <label for="date">example: </label>
+       <input name="date" type="text">
+    </div>   
+
+    <h3>Message Search</h3>
+    <div id="searchButtons">
+       <input name="search" type="text" v-model="searchString"><br><br>
+    </div>
+
+    <table>
     <tr>
       <td id="label">Timestamp</td>
       <td id="label">Severity</td>
@@ -18,6 +31,7 @@
       <td>{{ log.severity }}</td>
       <td>{{ log.message }}</td>
     </tr>
+    </table>
   </div>
 </template>
 
@@ -36,6 +50,9 @@ export default {
      infoFilter: false,
      warningFilter: false,
      errorFilter: false,
+     ascending: true,
+     firstLoad: true,
+     searchString: '',
      noResults: [ { timestamp: '', severity: '', message: 'no results found'} ]
   }},
   methods: {
@@ -53,21 +70,36 @@ export default {
         this.infoFilter = false
         this.warningFilter = false
         this.errorFilter = !this.errorFilter
+     },
+     DateOrderSwap() {
+        this.ascending = !this.ascending
+        this.firstLoad = false
      }
   },
   computed: {
      computeLogs() {
-        var filteredLogs
+        var filteredLogs = this.logs
+
+        // Severity
         if (this.infoFilter) {
-           filteredLogs = filters.info(this.logs)
+           filteredLogs = filters.info(filteredLogs)
         } else if (this.warningFilter) {
-           filteredLogs = filters.warning(this.logs)
+           filteredLogs = filters.warning(filteredLogs)
         } else if (this.errorFilter) {
-           filteredLogs = filters.error(this.logs)
-        } else {
-           filteredLogs = this.logs
+           filteredLogs = filters.error(filteredLogs)
         }
 
+        // Date
+        if ((this.ascending && !this.firstLoad) || !this.ascending) { // logs are always asc when first loaded so no need to flip
+           filteredLogs = filteredLogs.reverse()
+        }
+
+        //Search
+        if (this.searchString.length != 0) {
+           filteredLogs = filters.search(filteredLogs, this.searchString)
+        }
+
+        // Empty check
         if (filteredLogs.length == 0) {
            return this.noResults
         } else {
@@ -90,17 +122,24 @@ td {
    padding-bottom: 10px;
 }
 
+tr:hover {
+   background-color: #2CB466;
+   color: white;
+}
+
 button {
    margin: 5px 20px 5px 20px;
 }
 
-#filterButtons {
+#filterButtons, #dateButtons, #searchButtons {
    display: inline-block;
 }
 
 #label {
+   font-weight: bold;
    padding-left: 10px;
    padding-right: 10px;
+   border: 1px solid black;
 }
 
 .default {

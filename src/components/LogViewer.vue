@@ -92,9 +92,11 @@ export default {
         // Date
         // Still seems to be wonky, if you choose the severity first it won't swap back to ascending
         // I think it has something to do with this being a computed method
-        if (!this.ascending || (this.ascending && !this.firstLoad)) { // logs are always asc when first loaded so no need to flip
+        // Also, this logic makes it every time a search it being done :))))
+        /*if (!this.ascending || (this.ascending && !this.firstLoad)) { // logs are always asc when first loaded so no need to flip
            filteredLogs = filteredLogs.reverse()
         }
+        */
 
         //Search
         if (this.searchString.length != 0) {

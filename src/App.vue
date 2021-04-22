@@ -11,6 +11,7 @@
 
 <script>
 import LogViewer from './components/LogViewer.vue'
+import frame from './scripts/createFrame'
 
 export default {
   components: { LogViewer },
@@ -29,7 +30,8 @@ export default {
         return function() {
           var contents = reader.result
           var lines = contents.split('\n')
-          self.logs = lines
+
+          self.logs = frame.createFrame(lines)
           self.logsLoaded = true
         }
       })(reader)
